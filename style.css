@@ -1,5 +1,5 @@
 .cell {
-	float: left;
+	position: absolute; /* required by jsPlumb */
 	width: 62px;
 	height: 94px;
 	border: 1px;
