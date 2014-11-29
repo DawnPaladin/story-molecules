@@ -14,6 +14,20 @@ jsPlumb.ready(function(){
 	jsPlumb.connect({
 		source: 'C',
 		target: '3as',
-		endpoint: "Rectangle"
+		endpoint: "Rectangle",
+		anchor: "AutoDefault"
 	});
 });
+var cellRegistry = ['3as', 'C'];
+function newCell() {
+	var cellIndex = "cell" + (cellRegistry.length + 1);
+	$('#cellTemplate').clone().appendTo('#cellBlock')
+		.show()
+		.attr('id', cellIndex)
+		.removeClass('ui-draggable') // see https://code.google.com/p/jsplumb/issues/detail?id=141
+		.find('.tropeIdentifier').text(cellIndex)
+	;
+	cellRegistry.push(cellIndex);
+	jsPlumb.draggable(cellIndex);
+}
+$('#newCell').click(newCell);
