@@ -11,14 +11,19 @@ jsPlumb.ready(function(){
 		Endpoints : [ [ "Dot", { radius:7 } ], [ "Dot", { radius:11 } ] ],
 		EndpointStyles : [{ fillStyle:"#225588" }, { fillStyle:"#558822" }]
 	});
-	jsPlumb.connect({
-		source: 'C',
-		target: '3as',
-		endpoint: "Rectangle",
-		anchor: "AutoDefault"
-	});
 });
-var cellRegistry = ['3as', 'C'];
+
+var endpointOptions = {
+	endpoint: "Rectangle",
+	isSource: true,
+	isTarget: true,
+	PaintStyle : {
+	  lineWidth:13,
+	  strokeStyle: 'rgba(200,0,0,0.5)'
+	},
+	EndpointStyles : [{ fillStyle:"#225588" }, { fillStyle:"#558822" }]
+};
+var cellRegistry = [];
 function newCell() {
 	var cellIndex = "cell" + (cellRegistry.length + 1);
 	$('#cellTemplate').clone().appendTo('#cellBlock')
@@ -29,5 +34,9 @@ function newCell() {
 	;
 	cellRegistry.push(cellIndex);
 	jsPlumb.draggable(cellIndex);
+	jsPlumb.addEndpoint(cellIndex, {anchor: "Top"}, endpointOptions);
+	jsPlumb.addEndpoint(cellIndex, {anchor: "Right"}, endpointOptions);
+	jsPlumb.addEndpoint(cellIndex, {anchor: "Bottom"}, endpointOptions);
+	jsPlumb.addEndpoint(cellIndex, {anchor: "Left"}, endpointOptions);
 }
 $('#newCell').click(newCell);
