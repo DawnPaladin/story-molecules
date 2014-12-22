@@ -40,4 +40,33 @@ function newCell() {
 	jsPlumb.addEndpoint(cellIndex, {anchor: "Bottom"}, endpointOptions);
 	jsPlumb.addEndpoint(cellIndex, {anchor: "Left"}, endpointOptions);
 }
-$('#newCell').click(newCell);
+$('#newCellButton').click(newCell);
+
+var containerRegistry = [];
+function newContainer() {
+	var containerIndex = "container" + (containerRegistry.length + 1);
+	$('#containerTemplate').clone().appendTo('#cellBlock')
+		.show()
+		.attr('id', containerIndex)
+		.removeClass('ui-draggable') // see https://code.google.com/p/jsplumb/issues/detail?id=141
+		.resizable({ // correct handle position while/after resizing
+			resize:function(e, ui) {
+				jsPlumb.repaintEverything();
+			}
+		})
+	;
+	containerRegistry.push(containerIndex);
+	jsPlumb.draggable(containerIndex, {
+		drag:function(e, ui) { // correct handle position while dragging
+			jsPlumb.repaintEverything();
+		},
+		stop:function(e, ui) { // correct handle position when dragging stops
+			jsPlumb.repaintEverything();
+		}
+	});
+	jsPlumb.addEndpoint(containerIndex, {anchor: "Top"}, endpointOptions);
+	jsPlumb.addEndpoint(containerIndex, {anchor: "Right"}, endpointOptions);
+	jsPlumb.addEndpoint(containerIndex, {anchor: "Bottom"}, endpointOptions);
+	jsPlumb.addEndpoint(containerIndex, {anchor: "Left"}, endpointOptions);
+}
+$('#newContainerButton').click(newContainer);

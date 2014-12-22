@@ -27,3 +27,10 @@
 	float: right;
 	margin: 2px 3px;
 }
+
+.container {
+	position: absolute;
+	width: 150px;
+	height: 150px;
+	background-color: #DCC6E0;
+}
