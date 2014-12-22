@@ -26,11 +26,12 @@ var endpointOptions = {
 var cellRegistry = [];
 function newCell() {
 	var cellIndex = "cell" + (cellRegistry.length + 1);
+	var cellIdentifier = $('#newCellIdentifierInput').val();
 	$('#cellTemplate').clone().appendTo('#cellBlock')
 		.show()
 		.attr('id', cellIndex)
 		.removeClass('ui-draggable') // see https://code.google.com/p/jsplumb/issues/detail?id=141
-		.find('.tropeIdentifier').text(cellIndex)
+		.find('.tropeIdentifier').text(cellIdentifier)
 	;
 	cellRegistry.push(cellIndex);
 	jsPlumb.draggable(cellIndex);
