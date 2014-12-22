@@ -24,17 +24,26 @@ var endpointOptions = {
 	EndpointStyles : [{ fillStyle:"#225588" }, { fillStyle:"#558822" }]
 };
 var cellRegistry = [];
-function newCell() {
+function newCell(event) {
+	console.log(event);
+	var container = $(event.target).parent();
 	var cellIndex = "cell" + (cellRegistry.length + 1);
 	var cellIdentifier = $('#newCellIdentifierInput').val();
-	$('#cellTemplate').clone().appendTo('#cellBlock')
+	$('#cellTemplate').clone().appendTo(container)
 		.show()
 		.attr('id', cellIndex)
 		.removeClass('ui-draggable') // see https://code.google.com/p/jsplumb/issues/detail?id=141
-		.find('.tropeIdentifier').text(cellIdentifier)
+		.find('.tropeIdentifier').text(cellIdentifier).end()
 	;
 	cellRegistry.push(cellIndex);
-	jsPlumb.draggable(cellIndex);
+	jsPlumb.draggable(cellIndex, {
+		drag:function(e, ui) { // correct handle position while dragging
+			jsPlumb.repaintEverything();
+		},
+		stop:function(e, ui) { // correct handle position when dragging stops
+			jsPlumb.repaintEverything();
+		}
+	});
 	jsPlumb.addEndpoint(cellIndex, {anchor: "Top"}, endpointOptions);
 	jsPlumb.addEndpoint(cellIndex, {anchor: "Right"}, endpointOptions);
 	jsPlumb.addEndpoint(cellIndex, {anchor: "Bottom"}, endpointOptions);
@@ -54,6 +63,7 @@ function newContainer() {
 				jsPlumb.repaintEverything();
 			}
 		})
+		.find('.newCellButton').click(newCell).end()
 	;
 	containerRegistry.push(containerIndex);
 	jsPlumb.draggable(containerIndex, {
