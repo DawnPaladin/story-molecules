@@ -1,15 +1,15 @@
 .cell {
+	background-color: #9b59b6;
 	position: absolute; /* required by jsPlumb */
-	width: 62px;
-	height: 94px;
 	border: 1px;
-	border-style: solid;
-/*	border-color: #DBDBDB;
-*/	width: 60px;
+	border-style: none;
+/*	border-color: #DBDBDB; */
+	border-radius: .5em;
+	padding: 1em;
 }
 .tropeIdentifier {
 	font-family: 'PT Sans', sans-serif;
-	font-size: 27px;
+	font-size: 1.25em;
 	text-align: center;
 	margin: 8px 0 0 0;
 	clear: both;
