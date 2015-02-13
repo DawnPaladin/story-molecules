@@ -25,9 +25,11 @@ var endpointOptions = {
 	EndpointStyles : [{ fillStyle:"#225588" }, { fillStyle:"#558822" }]
 };
 var cellRegistry = [];
+var plumbRegistry = {};
 function newCell(event) {
 	console.log(event);
 	var container = $(event.target).parent();
+	var containerIndex = $(container).attr('id');
 	var cellIndex = "cell" + (cellRegistry.length + 1);
 	var cellIdentifier = $('#newCellIdentifierInput').val();
 	$('#cellTemplate').clone().appendTo(container)
@@ -37,8 +39,8 @@ function newCell(event) {
 		.find('.tropeIdentifier').text(cellIdentifier).end()
 	;
 	cellRegistry.push(cellIndex);
-	jsPlumb.draggable(cellIndex, {
-		//containment: "parent",
+	plumbRegistry[containerIndex].draggable(cellIndex, {
+		containment: "parent",
 		drag:function(e, ui) { // correct handle position while dragging
 			jsPlumb.repaintEverything();
 		},
@@ -46,10 +48,10 @@ function newCell(event) {
 			jsPlumb.repaintEverything();
 		}
 	});
-	jsPlumb.addEndpoint(cellIndex, {anchor: "Top"}, endpointOptions);
-	jsPlumb.addEndpoint(cellIndex, {anchor: "Right"}, endpointOptions);
-	jsPlumb.addEndpoint(cellIndex, {anchor: "Bottom"}, endpointOptions);
-	jsPlumb.addEndpoint(cellIndex, {anchor: "Left"}, endpointOptions);
+	plumbRegistry[containerIndex].addEndpoint(cellIndex, {anchor: "Top"}, endpointOptions);
+	plumbRegistry[containerIndex].addEndpoint(cellIndex, {anchor: "Right"}, endpointOptions);
+	plumbRegistry[containerIndex].addEndpoint(cellIndex, {anchor: "Bottom"}, endpointOptions);
+	plumbRegistry[containerIndex].addEndpoint(cellIndex, {anchor: "Left"}, endpointOptions);
 }
 $('#newCellButton').click(newCell);
 
@@ -76,5 +78,6 @@ function newContainer() {
 	jsPlumb.addEndpoint(containerIndex, {anchor: "Right"}, endpointOptions);
 	jsPlumb.addEndpoint(containerIndex, {anchor: "Bottom"}, endpointOptions);
 	jsPlumb.addEndpoint(containerIndex, {anchor: "Left"}, endpointOptions);
+	plumbRegistry[containerIndex] = jsPlumb.getInstance(); // create new jsPlumb instance in plumbRegistry for child cells
 }
 $('#newContainerButton').click(newContainer);
