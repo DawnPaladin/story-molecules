@@ -1,5 +1,6 @@
 jsPlumb.ready(function(){
 	// jsplumb init code
+	jsPlumb.setContainer("cellBlock");
 	jsPlumb.draggable($('.cell'));
 	jsPlumb.importDefaults({
 		// override defaults here
@@ -37,6 +38,7 @@ function newCell(event) {
 	;
 	cellRegistry.push(cellIndex);
 	jsPlumb.draggable(cellIndex, {
+		//containment: "parent",
 		drag:function(e, ui) { // correct handle position while dragging
 			jsPlumb.repaintEverything();
 		},
@@ -67,12 +69,8 @@ function newContainer() {
 	;
 	containerRegistry.push(containerIndex);
 	jsPlumb.draggable(containerIndex, {
-		drag:function(e, ui) { // correct handle position while dragging
-			jsPlumb.repaintEverything();
-		},
-		stop:function(e, ui) { // correct handle position when dragging stops
-			jsPlumb.repaintEverything();
-		}
+		drag:function(e, ui) {},
+		stop:function(e, ui) {}
 	});
 	jsPlumb.addEndpoint(containerIndex, {anchor: "Top"}, endpointOptions);
 	jsPlumb.addEndpoint(containerIndex, {anchor: "Right"}, endpointOptions);
