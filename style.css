@@ -30,9 +30,15 @@
 
 .container {
 	position: absolute;
-	width: 150px;
-	height: 150px;
+	width: 350px;
+	height: 250px;
 	background-color: #F9F9F9;
+}
+
+.containerAnchor {
+	position: relative;
+	width: 100%;
+	height: 100%;
 }
 
 .CardShadowL1 {

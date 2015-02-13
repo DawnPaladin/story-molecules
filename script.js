@@ -28,9 +28,11 @@ var cellRegistry = [];
 function newCell(event) {
 	console.log(event);
 	var container = $(event.target).parent();
+	var containerIndex = $(container).attr('id');
+	var containerAnchor = $('.containerAnchor');
 	var cellIndex = "cell" + (cellRegistry.length + 1);
 	var cellIdentifier = $('#newCellIdentifierInput').val();
-	$('#cellTemplate').clone().appendTo(container)
+	$('#cellTemplate').clone().appendTo(containerAnchor)
 		.show()
 		.attr('id', cellIndex)
 		.removeClass('ui-draggable') // see https://code.google.com/p/jsplumb/issues/detail?id=141
@@ -38,11 +40,13 @@ function newCell(event) {
 	;
 	cellRegistry.push(cellIndex);
 	jsPlumb.draggable(cellIndex, {
-		//containment: "parent",
+		containment: "parent",
 		drag:function(e, ui) { // correct handle position while dragging
-			jsPlumb.repaintEverything();
+			//jsPlumb.repaintEverything();
+			jsPlumb.hide(cellIndex, true);
 		},
 		stop:function(e, ui) { // correct handle position when dragging stops
+			jsPlumb.show(cellIndex, "hide");
 			jsPlumb.repaintEverything();
 		}
 	});
