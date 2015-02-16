@@ -24,19 +24,34 @@ var endpointOptions = {
 	},
 	EndpointStyles : [{ fillStyle:"#225588" }, { fillStyle:"#558822" }]
 };
-var cellRegistry = [];
+function Cell(name, serial) { // class definition
+	this.name = name;
+	this.serial = serial;
+	this.xCoord = 0; // TODO
+	this.yCoord = 0; // TODO
+	this.remove = function() {}; // TODO
+}
+var registry = {
+	cellCount: 0,
+	containerCount: 0,
+	addCell: function(name){
+		var serial = ++registry.cellCount;
+		var cellIndex = "cell" + serial;
+		registry[cellIndex] = new Cell(name, serial);
+		return cellIndex;
+	}
+};
+
 function newCell(event) {
-	console.log(event);
 	var container = $(event.target).parent();
-	var cellIndex = "cell" + (cellRegistry.length + 1);
 	var cellIdentifier = $('#newCellIdentifierInput').val();
+	var cellIndex = registry.addCell(cellIdentifier);
 	$('#cellTemplate').clone().appendTo(container)
 		.show()
 		.attr('id', cellIndex)
 		.removeClass('ui-draggable') // see https://code.google.com/p/jsplumb/issues/detail?id=141
 		.find('.tropeIdentifier').text(cellIdentifier).end()
 	;
-	cellRegistry.push(cellIndex);
 	jsPlumb.draggable(cellIndex, {
 		//containment: "parent",
 		drag:function(e, ui) { // correct handle position while dragging
