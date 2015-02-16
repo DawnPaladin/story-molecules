@@ -44,6 +44,9 @@ function newCell(event) {
 		},
 		stop:function(e, ui) { // correct handle position when dragging stops
 			jsPlumb.repaintEverything();
+			var cellCoords = $(e.target).position();
+			$('#xCoord').html(cellCoords.left);
+			$('#yCoord').html(cellCoords.top);
 		}
 	});
 	jsPlumb.addEndpoint(cellIndex, {anchor: "Top"}, endpointOptions);
