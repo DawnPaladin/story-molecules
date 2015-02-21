@@ -55,7 +55,7 @@ function newCell(event) {
 		.removeClass('ui-draggable') // see https://code.google.com/p/jsplumb/issues/detail?id=141
 		.find('.tropeIdentifier').text(cellIdentifier).end()
 	;
-	$('#'+cellIndex).find('.cellCloseButton').on('click', '', cellIndex, removeCell);
+	$('#'+cellIndex).find('.closeButton').on('click', '', cellIndex, removeCell);
 	jsPlumb.draggable(cellIndex, {
 		//containment: "parent",
 		drag:function(e, ui) { // correct handle position while dragging
@@ -102,6 +102,7 @@ function newContainer() {
 		.find('.newCellButton').click(newCell).end()
 	;
 	containerRegistry.push(containerIndex);
+	$('#'+containerIndex).find('.closeButton').on('click', '', containerIndex, removeContainer);
 	jsPlumb.draggable(containerIndex, {
 		drag:function(e, ui) {},
 		stop:function(e, ui) {}
@@ -112,3 +113,10 @@ function newContainer() {
 	jsPlumb.addEndpoint(containerIndex, {anchor: "Left"}, endpointOptions);
 }
 $('#newContainerButton').click(newContainer);
+function removeContainer(event) {
+	var containerIndex = event.data;
+	jsPlumb.detachAllConnections(containerIndex);
+	// TODO: Remove endpoints
+	$('#'+containerIndex).remove();
+	//registry[containerIndex].remove();
+}
