@@ -55,6 +55,7 @@ function newCell(event) {
 		.removeClass('ui-draggable') // see https://code.google.com/p/jsplumb/issues/detail?id=141
 		.find('.tropeIdentifier').text(cellIdentifier).end()
 	;
+	$('#'+cellIndex).find('.cellCloseButton').on('click', '', cellIndex, removeCell);
 	jsPlumb.draggable(cellIndex, {
 		//containment: "parent",
 		drag:function(e, ui) { // correct handle position while dragging
@@ -69,12 +70,22 @@ function newCell(event) {
 			$('#yCoord').html(cellCoords.top);
 		}
 	});
-	jsPlumb.addEndpoint(cellIndex, {anchor: "Top"}, endpointOptions);
-	jsPlumb.addEndpoint(cellIndex, {anchor: "Right"}, endpointOptions);
-	jsPlumb.addEndpoint(cellIndex, {anchor: "Bottom"}, endpointOptions);
-	jsPlumb.addEndpoint(cellIndex, {anchor: "Left"}, endpointOptions);
+	registry[cellIndex].topEndpoint = jsPlumb.addEndpoint(cellIndex, {anchor: "Top"}, endpointOptions);
+	registry[cellIndex].rightEndpoint = jsPlumb.addEndpoint(cellIndex, {anchor: "Right"}, endpointOptions);
+	registry[cellIndex].bottomEndpoint = jsPlumb.addEndpoint(cellIndex, {anchor: "Bottom"}, endpointOptions);
+	registry[cellIndex].leftEndpoint = jsPlumb.addEndpoint(cellIndex, {anchor: "Left"}, endpointOptions);
 }
 $('#newCellButton').click(newCell);
+function removeCell(event) {
+	var cellIndex = event.data;
+	jsPlumb.detachAllConnections(cellIndex);
+	jsPlumb.deleteEndpoint(registry[cellIndex].topEndpoint);
+	jsPlumb.deleteEndpoint(registry[cellIndex].rightEndpoint);
+	jsPlumb.deleteEndpoint(registry[cellIndex].bottomEndpoint);
+	jsPlumb.deleteEndpoint(registry[cellIndex].leftEndpoint);
+	$('#'+cellIndex).remove();
+	registry[cellIndex].remove();
+}
 
 var containerRegistry = [];
 function newContainer() {

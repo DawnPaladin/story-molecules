@@ -27,6 +27,11 @@
 	float: right;
 	margin: 2px 3px;
 }
+.cellCloseButton {
+	position: absolute;
+	top: 0;
+	right: 0;
+}
 
 .container {
 	position: absolute;
