@@ -27,9 +27,12 @@ var endpointOptions = {
 function Cell(name, serial) { // class definition
 	this.name = name;
 	this.serial = serial;
-	this.xCoord = 0; // TODO
-	this.yCoord = 0; // TODO
-	this.remove = function() {}; // TODO
+	this.cellIndex = "cell" + serial;
+	this.xCoord = 0;
+	this.yCoord = 0;
+	this.remove = function() {
+		delete registry[this.cellIndex];
+	};
 }
 var registry = {
 	cellCount: 0,
@@ -60,6 +63,8 @@ function newCell(event) {
 		stop:function(e, ui) { // correct handle position when dragging stops
 			jsPlumb.repaintEverything();
 			var cellCoords = $(e.target).position();
+			registry[cellIndex].xCoord = cellCoords.left;
+			registry[cellIndex].yCoord = cellCoords.top;
 			$('#xCoord').html(cellCoords.left);
 			$('#yCoord').html(cellCoords.top);
 		}
