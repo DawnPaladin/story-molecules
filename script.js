@@ -34,14 +34,30 @@ function Cell(name, serial) { // class definition
 		delete registry[this.cellIndex];
 	};
 }
+function Container(name, serial) { // class definition 
+	this.name = name;
+	this.serial = serial;
+	this.containerIndex = "container" + serial;
+	this.xCoord = 0;
+	this.yCoord = 0;
+	this.remove = function() {
+		delete registry[this.containerIndex];
+	};
+}
 var registry = {
 	cellCount: 0,
 	containerCount: 0,
-	addCell: function(name){
+	addCell: function(name) {
 		var serial = ++registry.cellCount;
 		var cellIndex = "cell" + serial;
 		registry[cellIndex] = new Cell(name, serial);
 		return cellIndex;
+	},
+	addContainer: function() {
+		var serial = ++registry.containerCount;
+		var containerIndex = "container" + serial;
+		registry[containerIndex] = new Container(name, serial);
+		return containerIndex;
 	}
 };
 
@@ -87,9 +103,8 @@ function removeCell(event) {
 	registry[cellIndex].remove();
 }
 
-var containerRegistry = [];
 function newContainer() {
-	var containerIndex = "container" + (containerRegistry.length + 1);
+	var containerIndex = registry.addContainer();
 	$('#containerTemplate').clone().appendTo('#cellBlock')
 		.show()
 		.attr('id', containerIndex)
@@ -101,22 +116,30 @@ function newContainer() {
 		})
 		.find('.newCellButton').click(newCell).end()
 	;
-	containerRegistry.push(containerIndex);
 	$('#'+containerIndex).find('.closeButton').on('click', '', containerIndex, removeContainer);
 	jsPlumb.draggable(containerIndex, {
 		drag:function(e, ui) {},
-		stop:function(e, ui) {}
+		stop:function(e, ui) {
+			var containerCoords = $(e.target).position();
+			registry[containerIndex].xCoord = containerCoords.left;
+			registry[containerIndex].yCoord = containerCoords.top;
+			$('#xCoord').html(containerCoords.left);
+			$('#yCoord').html(containerCoords.top);
+		}
 	});
-	jsPlumb.addEndpoint(containerIndex, {anchor: "Top"}, endpointOptions);
-	jsPlumb.addEndpoint(containerIndex, {anchor: "Right"}, endpointOptions);
-	jsPlumb.addEndpoint(containerIndex, {anchor: "Bottom"}, endpointOptions);
-	jsPlumb.addEndpoint(containerIndex, {anchor: "Left"}, endpointOptions);
+	registry[containerIndex].topEndpoint = jsPlumb.addEndpoint(containerIndex, {anchor: "Top"}, endpointOptions);
+	registry[containerIndex].rightEndpoint = jsPlumb.addEndpoint(containerIndex, {anchor: "Right"}, endpointOptions);
+	registry[containerIndex].bottomEndpoint = jsPlumb.addEndpoint(containerIndex, {anchor: "Bottom"}, endpointOptions);
+	registry[containerIndex].leftEndpoint = jsPlumb.addEndpoint(containerIndex, {anchor: "Left"}, endpointOptions);
 }
 $('#newContainerButton').click(newContainer);
 function removeContainer(event) {
 	var containerIndex = event.data;
 	jsPlumb.detachAllConnections(containerIndex);
-	// TODO: Remove endpoints
+	jsPlumb.deleteEndpoint(registry[containerIndex].topEndpoint);
+	jsPlumb.deleteEndpoint(registry[containerIndex].rightEndpoint);
+	jsPlumb.deleteEndpoint(registry[containerIndex].bottomEndpoint);
+	jsPlumb.deleteEndpoint(registry[containerIndex].leftEndpoint);
 	$('#'+containerIndex).remove();
-	//registry[containerIndex].remove();
+	registry[containerIndex].remove();
 }
