@@ -30,6 +30,7 @@ function Cell(name, serial) { // class definition
 	this.cellIndex = "cell" + serial;
 	this.xCoord = 0;
 	this.yCoord = 0;
+	this.parent = "";
 	this.remove = function() {
 		delete registry[this.cellIndex];
 	};
@@ -40,6 +41,7 @@ function Container(name, serial) { // class definition
 	this.containerIndex = "container" + serial;
 	this.xCoord = 0;
 	this.yCoord = 0;
+	this.children = [];
 	this.remove = function() {
 		delete registry[this.containerIndex];
 	};
@@ -90,6 +92,11 @@ function newCell(event) {
 	registry[cellIndex].rightEndpoint = jsPlumb.addEndpoint(cellIndex, {anchor: "Right"}, endpointOptions);
 	registry[cellIndex].bottomEndpoint = jsPlumb.addEndpoint(cellIndex, {anchor: "Bottom"}, endpointOptions);
 	registry[cellIndex].leftEndpoint = jsPlumb.addEndpoint(cellIndex, {anchor: "Left"}, endpointOptions);
+	if (container.hasClass("container")){ // not a root-level cell. Establish parent/child relationship
+		var containerIndex = container.attr("id");
+		registry[containerIndex].children.push(cellIndex);
+		registry[cellIndex].parent = containerIndex;
+	}
 }
 $('#newCellButton').click(newCell);
 function removeCell(event) {
@@ -99,6 +106,12 @@ function removeCell(event) {
 	jsPlumb.deleteEndpoint(registry[cellIndex].rightEndpoint);
 	jsPlumb.deleteEndpoint(registry[cellIndex].bottomEndpoint);
 	jsPlumb.deleteEndpoint(registry[cellIndex].leftEndpoint);
+	var container = $(event.target).parent().parent();
+	if (container.hasClass("container")){ // not a root-level cell
+		var containerIndex = container.attr("id");
+		var childIndex = registry[containerIndex].children.indexOf(cellIndex);
+		registry[containerIndex].children.splice(childIndex, 1); // remove child from array
+	}
 	$('#'+cellIndex).remove();
 	registry[cellIndex].remove();
 }
@@ -140,6 +153,10 @@ function removeContainer(event) {
 	jsPlumb.deleteEndpoint(registry[containerIndex].rightEndpoint);
 	jsPlumb.deleteEndpoint(registry[containerIndex].bottomEndpoint);
 	jsPlumb.deleteEndpoint(registry[containerIndex].leftEndpoint);
+	childrenList = registry[containerIndex].children;
+	for (var i = 0; i < childrenList.length; i++) {
+		childrenList[i]
+	};
 	$('#'+containerIndex).remove();
 	registry[containerIndex].remove();
 }
