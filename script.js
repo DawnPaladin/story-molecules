@@ -73,7 +73,7 @@ function newCell(event) {
 		.removeClass('ui-draggable') // see https://code.google.com/p/jsplumb/issues/detail?id=141
 		.find('.tropeIdentifier').text(cellIdentifier).end()
 	;
-	$('#'+cellIndex).find('.closeButton').on('click', '', cellIndex, removeCell);
+	$('#'+cellIndex).find('.closeButton').on('click', '', cellIndex, domRemoveCell);
 	jsPlumb.draggable(cellIndex, {
 		//containment: "parent",
 		drag:function(e, ui) { // correct handle position while dragging
@@ -99,21 +99,24 @@ function newCell(event) {
 	}
 }
 $('#newCellButton').click(newCell);
-function removeCell(event) {
+function domRemoveCell(event) {
 	var cellIndex = event.data;
+	dataRemoveCell(cellIndex);
+}
+function dataRemoveCell(cellIndex) {
 	jsPlumb.detachAllConnections(cellIndex);
 	jsPlumb.deleteEndpoint(registry[cellIndex].topEndpoint);
 	jsPlumb.deleteEndpoint(registry[cellIndex].rightEndpoint);
 	jsPlumb.deleteEndpoint(registry[cellIndex].bottomEndpoint);
 	jsPlumb.deleteEndpoint(registry[cellIndex].leftEndpoint);
-	var container = $(event.target).parent().parent();
-	if (container.hasClass("container")){ // not a root-level cell
-		var containerIndex = container.attr("id");
+	var containerIndex = registry[cellIndex].parent;
+	if (containerIndex.length > 0) { // has a parent
 		var childIndex = registry[containerIndex].children.indexOf(cellIndex);
 		registry[containerIndex].children.splice(childIndex, 1); // remove child from array
 	}
 	$('#'+cellIndex).remove();
 	registry[cellIndex].remove();
+	console.log("Removed " + cellIndex);
 }
 
 function newContainer() {
@@ -129,7 +132,7 @@ function newContainer() {
 		})
 		.find('.newCellButton').click(newCell).end()
 	;
-	$('#'+containerIndex).find('.closeButton').on('click', '', containerIndex, removeContainer);
+	$('#'+containerIndex).find('.closeButton').on('click', '', containerIndex, domRemoveContainer);
 	jsPlumb.draggable(containerIndex, {
 		drag:function(e, ui) {},
 		stop:function(e, ui) {
@@ -146,17 +149,20 @@ function newContainer() {
 	registry[containerIndex].leftEndpoint = jsPlumb.addEndpoint(containerIndex, {anchor: "Left"}, endpointOptions);
 }
 $('#newContainerButton').click(newContainer);
-function removeContainer(event) {
+function domRemoveContainer(event) {
 	var containerIndex = event.data;
+	dataRemoveContainer(containerIndex);
+}
+function dataRemoveContainer(containerIndex) {
 	jsPlumb.detachAllConnections(containerIndex);
 	jsPlumb.deleteEndpoint(registry[containerIndex].topEndpoint);
 	jsPlumb.deleteEndpoint(registry[containerIndex].rightEndpoint);
 	jsPlumb.deleteEndpoint(registry[containerIndex].bottomEndpoint);
 	jsPlumb.deleteEndpoint(registry[containerIndex].leftEndpoint);
 	childrenList = registry[containerIndex].children;
-	for (var i = 0; i < childrenList.length; i++) {
-		childrenList[i]
-	};
+	while (childrenList.length > 0) {
+		dataRemoveCell(childrenList[0]);
+	}
 	$('#'+containerIndex).remove();
 	registry[containerIndex].remove();
 }
