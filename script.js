@@ -166,3 +166,18 @@ function dataRemoveContainer(containerIndex) {
 	$('#'+containerIndex).remove();
 	registry[containerIndex].remove();
 }
+
+function stripRegistry(key, value) { // JSON.stringify can't handle circular references (such as endpoints), so we strip them out.
+	//if (typeof value == "function") return undefined;
+	if (key.indexOf("ndpoint") > 0) return undefined;
+	return value;
+}
+
+function save() {
+	localStorage.setItem('registry', JSON.stringify(registry, stripRegistry));
+}
+
+function load() {
+	newRegistry = JSON.parse(localStorage.getItem('registry'));
+
+}
