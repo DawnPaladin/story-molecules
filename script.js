@@ -63,15 +63,14 @@ var registry = {
 	}
 };
 
-function newCell(event) {
-	var container = $(event.target).parent();
-	var cellIdentifier = $('#newCellIdentifierInput').val();
-	var cellIndex = registry.addCell(cellIdentifier);
+function dataNewCell(name, parent) {
+	var cellIndex = registry.addCell(name);
+	var container = $('#'+parent);
 	$('#cellTemplate').clone().appendTo(container)
 		.show()
 		.attr('id', cellIndex)
 		.removeClass('ui-draggable') // see https://code.google.com/p/jsplumb/issues/detail?id=141
-		.find('.tropeIdentifier').text(cellIdentifier).end()
+		.find('.tropeIdentifier').text(name).end()
 	;
 	$('#'+cellIndex).find('.closeButton').on('click', '', cellIndex, domRemoveCell);
 	jsPlumb.draggable(cellIndex, {
@@ -98,7 +97,13 @@ function newCell(event) {
 		registry[cellIndex].parent = containerIndex;
 	}
 }
-$('#newCellButton').click(newCell);
+function domNewCell(event) {
+	var container = $(event.target).parent().attr('id') || 'cellBlock';
+	var cellIdentifier = $('#newCellIdentifierInput').val();
+	var cellIndex = registry.addCell(cellIdentifier);
+	dataNewCell(cellIdentifier, container);
+}
+$('#newCellButton').click(domNewCell);
 function domRemoveCell(event) {
 	var cellIndex = event.data;
 	dataRemoveCell(cellIndex);
@@ -130,7 +135,7 @@ function newContainer() {
 				jsPlumb.repaintEverything();
 			}
 		})
-		.find('.newCellButton').click(newCell).end()
+		.find('.newCellButton').click(domNewCell).end()
 	;
 	$('#'+containerIndex).find('.closeButton').on('click', '', containerIndex, domRemoveContainer);
 	jsPlumb.draggable(containerIndex, {
