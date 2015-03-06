@@ -1,29 +1,3 @@
-jsPlumb.ready(function(){
-	// jsplumb init code
-	jsPlumb.setContainer("cellBlock");
-	jsPlumb.draggable($('.cell'));
-	jsPlumb.importDefaults({
-		// override defaults here
-		PaintStyle : {
-		  lineWidth:13,
-		  strokeStyle: 'rgba(200,0,0,0.5)'
-		},
-		DragOptions : { cursor: "crosshair" },
-		Endpoints : [ [ "Dot", { radius:7 } ], [ "Dot", { radius:11 } ] ],
-		EndpointStyles : [{ fillStyle:"#225588" }, { fillStyle:"#558822" }]
-	});
-});
-
-var endpointOptions = {
-	endpoint: "Rectangle",
-	isSource: true,
-	isTarget: true,
-	PaintStyle : {
-	  lineWidth:13,
-	  strokeStyle: 'rgba(200,0,0,0.5)'
-	},
-	EndpointStyles : [{ fillStyle:"#225588" }, { fillStyle:"#558822" }]
-};
 function Cell(name, serial) { // class definition
 	this.name = name;
 	this.serial = serial;
@@ -101,16 +75,7 @@ function dataNewCell(name, parent) {
 		registry[cellIndex].parent = containerIndex;
 	}
 }
-function domNewCell(event) {
-	var container = $(event.target).parent().attr('id');
-	var cellIdentifier = $('#newCellIdentifierInput').val();
-	dataNewCell(cellIdentifier, container);
-}
-$('#newCellButton').click(domNewCell);
-function domRemoveCell(event) {
-	var cellIndex = event.data;
-	dataRemoveCell(cellIndex);
-}
+
 function dataRemoveCell(cellIndex) {
 	jsPlumb.detachAllConnections(cellIndex);
 	jsPlumb.deleteEndpoint(registry[cellIndex].topEndpoint);
@@ -127,40 +92,6 @@ function dataRemoveCell(cellIndex) {
 	console.log("Removed " + cellIndex);
 }
 
-function newContainer() {
-	var containerIndex = registry.addContainer();
-	$('#containerTemplate').clone().appendTo('#cellBlock')
-		.show()
-		.attr('id', containerIndex)
-		.removeClass('ui-draggable') // see https://code.google.com/p/jsplumb/issues/detail?id=141
-		.resizable({ // correct handle position while/after resizing
-			resize:function(e, ui) {
-				jsPlumb.repaintEverything();
-			}
-		})
-		.find('.newCellButton').click(domNewCell).end()
-	;
-	$('#'+containerIndex).find('.closeButton').on('click', '', containerIndex, domRemoveContainer);
-	jsPlumb.draggable(containerIndex, {
-		drag:function(e, ui) {},
-		stop:function(e, ui) {
-			var containerCoords = $(e.target).position();
-			registry[containerIndex].xCoord = containerCoords.left;
-			registry[containerIndex].yCoord = containerCoords.top;
-			$('#xCoord').html(containerCoords.left);
-			$('#yCoord').html(containerCoords.top);
-		}
-	});
-	registry[containerIndex].topEndpoint = jsPlumb.addEndpoint(containerIndex, {anchor: "Top"}, endpointOptions);
-	registry[containerIndex].rightEndpoint = jsPlumb.addEndpoint(containerIndex, {anchor: "Right"}, endpointOptions);
-	registry[containerIndex].bottomEndpoint = jsPlumb.addEndpoint(containerIndex, {anchor: "Bottom"}, endpointOptions);
-	registry[containerIndex].leftEndpoint = jsPlumb.addEndpoint(containerIndex, {anchor: "Left"}, endpointOptions);
-}
-$('#newContainerButton').click(newContainer);
-function domRemoveContainer(event) {
-	var containerIndex = event.data;
-	dataRemoveContainer(containerIndex);
-}
 function dataRemoveContainer(containerIndex) {
 	jsPlumb.detachAllConnections(containerIndex);
 	jsPlumb.deleteEndpoint(registry[containerIndex].topEndpoint);
