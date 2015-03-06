@@ -65,7 +65,11 @@ var registry = {
 
 function dataNewCell(name, parent) {
 	var cellIndex = registry.addCell(name);
-	var container = $('#'+parent);
+	var container;
+	if ($('#'+parent).is('.container'))
+		container = $('#'+parent);
+	else
+		container = $('#cellBlock');
 	$('#cellTemplate').clone().appendTo(container)
 		.show()
 		.attr('id', cellIndex)
@@ -98,9 +102,8 @@ function dataNewCell(name, parent) {
 	}
 }
 function domNewCell(event) {
-	var container = $(event.target).parent().attr('id') || 'cellBlock';
+	var container = $(event.target).parent().attr('id');
 	var cellIdentifier = $('#newCellIdentifierInput').val();
-	var cellIndex = registry.addCell(cellIdentifier);
 	dataNewCell(cellIdentifier, container);
 }
 $('#newCellButton').click(domNewCell);
@@ -184,5 +187,17 @@ function save() {
 
 function load() {
 	newRegistry = JSON.parse(localStorage.getItem('registry'));
-
+	for (var i = 1; i <= newRegistry.containerCount; i++) {
+		var containerIdentifier = "container" + i;
+		var loadingContainerData = newRegistry[containerIdentifier];
+		newContainer();
+		$('#'+containerIdentifier).css('left', loadingContainerData.xCoord).css('top', loadingContainerData.yCoord);
+	}
+	for (var j = 1; j <= newRegistry.cellCount; j++) {
+		var cellIdentifier = "cell" + j;
+		var loadingCellData = newRegistry[cellIdentifier];
+		dataNewCell(loadingCellData.name, loadingCellData.parent);
+		$('#'+cellIdentifier).css('left', loadingCellData.xCoord).css('top', loadingCellData.yCoord);
+	}
+	jsPlumb.repaintEverything();
 }
