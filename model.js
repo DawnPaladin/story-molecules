@@ -51,20 +51,6 @@ function dataNewCell(name, parent) {
 		.find('.tropeIdentifier').text(name).end()
 	;
 	$('#'+cellIndex).find('.closeButton').on('click', '', cellIndex, domRemoveCell);
-	jsPlumb.draggable(cellIndex, {
-		//containment: "parent",
-		drag:function(e, ui) { // correct handle position while dragging
-			jsPlumb.repaintEverything();
-		},
-		stop:function(e, ui) { // correct handle position when dragging stops
-			jsPlumb.repaintEverything();
-			var cellCoords = $(e.target).position();
-			registry[cellIndex].xCoord = cellCoords.left;
-			registry[cellIndex].yCoord = cellCoords.top;
-			$('#xCoord').html(cellCoords.left);
-			$('#yCoord').html(cellCoords.top);
-		}
-	});
 	registry[cellIndex].topEndpoint = jsPlumb.addEndpoint(cellIndex, {anchor: "Top"}, endpointOptions);
 	registry[cellIndex].rightEndpoint = jsPlumb.addEndpoint(cellIndex, {anchor: "Right"}, endpointOptions);
 	registry[cellIndex].bottomEndpoint = jsPlumb.addEndpoint(cellIndex, {anchor: "Bottom"}, endpointOptions);
@@ -74,6 +60,9 @@ function dataNewCell(name, parent) {
 		registry[containerIndex].children.push(cellIndex);
 		registry[cellIndex].parent = containerIndex;
 	}
+	jsPlumb.draggable(cellIndex, {
+		containment: container
+	});
 }
 
 function dataRemoveCell(cellIndex) {

@@ -1,7 +1,6 @@
 jsPlumb.ready(function(){
 	// jsplumb init code
 	jsPlumb.setContainer("cellBlock");
-	jsPlumb.draggable($('.cell'));
 	jsPlumb.importDefaults({
 		// override defaults here
 		PaintStyle : {
